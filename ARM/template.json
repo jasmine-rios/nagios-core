@@ -201,26 +201,25 @@
             }
         },
         {
-            "name": "[concat(parameters('virtualMachineName'), '/Install-Nagios.ps1')]",
+            "name": "[concat(parameters('virtualMachineName'), '/Install-Nagios.sh')]",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2021-04-01",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
             ],
-            "properties": {
-                "publisher": "Microsoft.Compute",
-                "type": "CustomScriptExtension",
-                "typeHandlerVersion": "1.10",
+           "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.1",  // You may use the latest version
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "script": "sudo htpasswd -b -c /usr/local/nagios/etc/htpasswd.users nagiosadmin && sudo systemctl restart httpd.service && sudo systemctl enable nagios.service && sudo systemctl start nagios.service && echo 'Nagios is now set up! Navigate to the browser with the URL https://<RHEL-PublicIpAddress>/nagios and log in with nagiosadmin and the password you just set.'"
+                    "script": "[base64('sudo htpasswd -b -c /usr/local/nagios/etc/htpasswd.users nagiosadmin && sudo systemctl restart httpd.service && sudo systemctl enable nagios.service && sudo systemctl start nagios.service && echo Nagios is now set up! Navigate to the browser with the URL https://<RHEL-PublicIpAddress>/nagios and log in with nagiosadmin and the password you just set.')]"
                 }
-            },
-            "tags": {
-                "Project": "Nagios"
-            }
+}
+
         }
+
     ],
     "outputs": {
         "SSH Instructions": {
