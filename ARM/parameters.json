@@ -4,18 +4,21 @@
     "parameters": {
         "location": {
             "value": "eastus",
+            "type": "string",
             "metadata": {
                 "description": "The region that the virtual machine will reside in."
             }
         },
         "networkInterfaceName": {
             "value": "Nagios-NI",
+            "type": "string",
             "metadata": {
                 "description": "The name of the network interface to created for use by the virtual machine."
             }
         },
         "networkSecurityGroupName": {
             "value": "Nagios-NSG",
+            "type": "string",
             "metadata": {
                 "description": "The name of the network security group that will created to allow ports 80 and 22."
             }
@@ -24,6 +27,7 @@
             "value": [
                 {
                     "name": "SSH",
+                    "type": "string",
                     "properties": {
                         "priority": 300,
                         "protocol": "TCP",
@@ -38,6 +42,7 @@
                 },
                 {
                     "name": "HTTP",
+                    "type": "string",
                     "properties": {
                         "priority": 400,
                         "protocol": "TCP",
@@ -54,60 +59,70 @@
         },
         "publicIpAddressName": {
             "value": "Nagios-PublicIP",
+            "type": "string",
             "metadata": {
                 "description": "The name of the public IP (PIP) to be created for use by the virtual machine."
             }
         },
         "publicIpAddressType": {
             "value": "Static",
+            "type": "string",
             "metadata": {
                 "description": "The type of PIP to be set; PIP will stay the same after reboot of the virtual machine."
             }
         },
         "publicIpAddressSku": {
             "value": "Standard",
+            "type": "string",
             "metadata": {
                 "description": "The SKU of the PIP to be used."
             }
         },
         "virtualMachineName": {
             "value": "Nagios-RHEL",
+            "type": "string",
             "metadata": {
                 "description": "The name of the virtual machine to be created."
             }
         },
         "osDiskType": {
             "value": "Premium_LRS",
+            "type": "string",
             "metadata": {
                 "description": "The type of disk to be used by RHEL OS which is locally redudant."
             }
         },
         "virtualMachineSize": {
             "value": "Standard_B2s",
+            "type": "string",
             "metadata": {
                 "description": "The size that the virtual machine will be created in."
             }
         },
         "adminUsername": {
             "value": "azureuser",
+            "type": "string",
             "metadata": {
                 "description": "The admin username to be used to log into the RHEL VM using SSH."
             }
         },
         "securityType": {
             "value": "TrustedLaunch",
+            "type": "string",
             "metadata": {
                 "description": "The recommended security type for the VM to be created in."
             }
         },
         "secureBoot": {
             "value": true,
+            "type": "bool",
             "metadata": {
                 "description": "The recommened boot settings for the VM to be created in."
             }
         },
         "vTPM": {
             "value": true,
+            "type": "bool",
             "metadata": {
                 "description": "The virtual trusted platform module that the VM will have as best security practices."
             }
@@ -120,6 +135,7 @@
         },
         "virtualNetworkName": {
             "value": "Nagios-VNet",
+            "type": "string",
             "metadata": {
                 "description": "Vnet that the VM will reside on."
             }

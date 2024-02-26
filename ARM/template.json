@@ -209,12 +209,12 @@
             }
         },
         {
-            "name": "[format('{0}/{1}', variables('vmName'), 'Install-Nagios.ps1')]",
+            "name": "[format('{0}/{1}', variables('virtualMachineName'), 'Install-Nagios.ps1')]",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2021-04-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines',[parameters('virtualMachineName')])]"
+                "[concat('Microsoft.Compute/virtualMachines', [parameters('virtualMachineName')])]"
             ],
             "properties": {
               "publisher": "Microsoft.Compute",
