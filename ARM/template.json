@@ -2,9 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "location": {
-            "type": "string"
-        },
         "networkInterfaceName": {
             "type": "string"
         },
@@ -53,11 +50,11 @@
     },
     "variables": {},
     "resources": [
-        {
+       {
             "name": "[parameters('virtualNetworkName')]",
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2022-11-01",
-            "location": "[parameters('location')]",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -74,7 +71,6 @@
                 ]
             },
             "tags": {
-                "Template by": "Jasmine Rios",
                 "Project": "Nagios"
             }
         },
@@ -82,7 +78,7 @@
             "name": "[parameters('networkInterfaceName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2022-11-01",
-            "location": "[parameters('location')]",
+            "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
                 "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]",
@@ -108,7 +104,6 @@
                 }
             },
             "tags": {
-                "Template by": "Jasmine Rios",
                 "Project": "Nagios"
             }
         },
@@ -116,12 +111,11 @@
             "name": "[parameters('networkSecurityGroupName')]",
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-02-01",
-            "location": "[parameters('location')]",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "securityRules": "[parameters('networkSecurityGroupRules')]"
             },
             "tags": {
-                "Template by": "Jasmine Rios",
                 "Project": "Nagios"
             }
         },
@@ -129,7 +123,7 @@
             "name": "[parameters('publicIpAddressName')]",
             "type": "Microsoft.Network/publicIpAddresses",
             "apiVersion": "2019-02-01",
-            "location": "[parameters('location')]",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
             },
@@ -137,7 +131,6 @@
                 "name": "[parameters('publicIpAddressSku')]"
             },
             "tags": {
-                "Template by": "Jasmine Rios",
                 "Project": "Nagios"
             }
         },
@@ -145,7 +138,7 @@
             "name": "[parameters('virtualMachineName')]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2021-03-01",
-            "location": "[parameters('location')]",
+            "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]"
             ],
@@ -204,37 +197,35 @@
                 }
             },
             "tags": {
-                "Template by": "Jasmine Rios",
                 "Project": "Nagios"
             }
         },
         {
-            "name": "[format('{0}/{1}', variables('virtualMachineName'), 'Install-Nagios.ps1')]",
+            "name": "[concat(parameters('virtualMachineName'), '/Install-Nagios.ps1')]",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2021-04-01",
-            "location": "[parameters('location')]",
+            "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines', [parameters('virtualMachineName')])]"
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
             ],
             "properties": {
-              "publisher": "Microsoft.Compute",
-              "type": "CustomScriptExtension",
-              "typeHandlerVersion": "1.7",
-              "autoUpgradeMinorVersion": true,
-              "settings": {
-                "commandToExecute": "bash sudo htpasswd -b -c /usr/local/nagios/etc/htpasswd.users nagiosadmin && bash sudo systemctl restart httpd.service && bash sudo systemctl enable nagios.service && bash sudo systemctl start nagios.service && echo 'Nagios is now setup! Navigate to the browser with the URL https:<RHEL-PublicIpAddress>/nagios and login with nagiosadmin and the password you just set.'"
-              }
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                "typeHandlerVersion": "1.10",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "script": "sudo htpasswd -b -c /usr/local/nagios/etc/htpasswd.users nagiosadmin && sudo systemctl restart httpd.service && sudo systemctl enable nagios.service && sudo systemctl start nagios.service && echo 'Nagios is now set up! Navigate to the browser with the URL https://<RHEL-PublicIpAddress>/nagios and log in with nagiosadmin and the password you just set.'"
+                }
             },
             "tags": {
-                "Template by": "Jasmine Rios",
                 "Project": "Nagios"
             }
-          }
+        }
     ],
     "outputs": {
         "SSH Instructions": {
             "type": "string",
-            "value": "[concat('SSH into the instance using the following command: \nssh -i <path-to-private-key>/<name-of-private-key> ', parameters('adminUsername'), '@', reference(resourceId('Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))).ipAddress)]"
+             "value": "[concat('SSH into the instance using the following command: \nssh -i <path-to-private-key>/<name-of-private-key> ', parameters('adminUsername'), '@', reference(resourceId('Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))).ipAddress)]"
         }
     }
 }
